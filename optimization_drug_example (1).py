@@ -1,6 +1,21 @@
 # drug efficacy optimization example for BME 2315
 # made by Lavie, fall 2025
 
+
+#ChatGPT was used to fix some syntax errors and make an efficient loop for question 3
+
+
+'''
+In class prompts:
+First slide
+1. With a higher lambda value, the drug becomes more toxic and has a higher risk. The optimal dose decreases and the curve shifts downward. 
+2. Newtons Method converges faster than the steepest ascent method.
+3. Decreasing the number of iterations leaves more room for error. It results in a less accurate optimal dose.
+Questions 4-6 from the second slide are commented throughout the code where the prompts are applied. The optimal combined doses are printed when code is run. 
+'''
+
+
+
 #%% import libraries
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,7 +49,7 @@ fig, ax = plt.subplots(figsize=(10, 6))
 plt.plot(x, metformin(x), label='Metformin', color='blue')
 plt.plot(x, lisinopril(x), label='Lisinopril', color='orange')
 plt.plot(x, escitalopram(x), label='Escitalopram', color='green')
-plt.plot(x, metformin(x)+ lisinopril (x) + escitalopram(x), label='Combined Effect', color='red', linestyle='--')
+plt.plot(x, metformin(x)+ lisinopril (x) + escitalopram(x), label='Combined Effect', color='red', linestyle='--') #QUESTION 4: plotting combined effect
 plt.title('Drug Efficacy vs Dosage')
 plt.xlabel('Dosage (mg)')
 plt.ylabel('Net Effect')
@@ -78,6 +93,7 @@ opt_dose_escitalopram, opt_effect_escitalopram = steepest_ascent(escitalopram, x
 print(f"Steepest Ascent Method - Optimal Escitalopram Dose: {opt_dose_escitalopram:.2f} mg")
 print(f"Steepest Ascent Method - Optimal Escitalopram Effect: {opt_effect_escitalopram*100:.2f}%")
 
+#QUESTION 5: using the steepest ascent method for the combined dose
 # combined drug
 opt_dose_combined, opt_effect_combined = steepest_ascent(lambda x: metformin(x) + lisinopril(x) + escitalopram(x), x0=1.0)
 print(f"Steepest Ascent Method - Optimal Combined Dose: {opt_dose_combined:.2f} mg")
@@ -124,11 +140,15 @@ opt_dose_escitalopram_nm, opt_effect_escitalopram_nm = newtons_method(escitalopr
 print(f"Newton's Method - Optimal Escitalopram Dose: {opt_dose_escitalopram_nm:.2f} mg")
 print(f"Newton's Method - Optimal Escitalopram Effect: {opt_effect_escitalopram_nm*100:.2f}%")
 
+# QUESTION 5: using Newton's Method for the combined dosage
 # combined drug
 opt_dose_combined_nm, opt_effect_combined_nm = newtons_method(lambda x: metformin(x) + lisinopril(x) + escitalopram(x), x0=1.0)
 print(f"Newton's Method - Optimal Combined Dose: {opt_dose_combined_nm:.2f} mg")
 print(f"Newton's Method - Optimal Combined Effect: {opt_effect_combined_nm*100:.2f}%")
 
+
+
+#QUESTION 6:
 # find best lamda value to achieve the optimal dose for merformin
 
 # 1) Target is the combined optimal dose (from your Newton's method result)
@@ -189,5 +209,8 @@ plt.show()
 
 # Restore original again after plotting
 metformin_lambda = metformin_lambda_original
+
+
+
 
 
