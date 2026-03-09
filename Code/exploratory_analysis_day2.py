@@ -1,3 +1,5 @@
+# ChatGPT was used on this assignment - mostly for fixing errors
+
 #%%
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -5,7 +7,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 #%%
 # Load the data
-data = pd.read_csv('C:\\Users\\ajq2af\\OneDrive - University of Virginia\\Documents\\UVA\\BME 2315\\module2\\Module-2-Epidemics-SIR-Modeling\\Data\\mystery_virus_daily_active_counts_RELEASE#1.csv', parse_dates=['date'], header=0, index_col=None)
+data = pd.read_csv('/Users/amelialuongo/Desktop/comp bme/Module-2-Epidemics-SIR-Modeling/Data/mystery_virus_daily_active_counts_RELEASE#2.csv', parse_dates=['date'], header=0, index_col=None)
 #%%
 # We have day number, date, and active cases. We can use the day number and active cases to fit an exponential growth curve to estimate R0.
 # Let's define the exponential growth function
@@ -25,7 +27,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
-data = pd.read_csv('C:\\Users\\ajq2af\\OneDrive - University of Virginia\\Documents\\UVA\\BME 2315\\module2\\Module-2-Epidemics-SIR-Modeling\\Data\\mystery_virus_daily_active_counts_RELEASE#1.csv', parse_dates=['date'], header=0, index_col=None)
+data = pd.read_csv('/Users/amelialuongo/Desktop/comp bme/Module-2-Epidemics-SIR-Modeling/Data/mystery_virus_daily_active_counts_RELEASE#2.csv', parse_dates=['date'], header=0, index_col=None)
 
 def euler_seir(beta, sigma, gamma, S0, E0, I0, R0, timepoints, N):  # function with inputs 
    # empty lists for S, E, I, R
@@ -41,7 +43,7 @@ def euler_seir(beta, sigma, gamma, S0, E0, I0, R0, timepoints, N):  # function w
     R.append(R0)
 
     # loop through timepoints to calculate the changes in S, E, I, R
-    for t in timepoints:
+    for t in range(len(timepoints) - 1):
         # derivatives for SEIR at time t
         dS = -beta * S[-1] * I[-1] / N
         dE = beta * S[-1] * I[-1] / N - sigma * E[-1]
@@ -64,9 +66,9 @@ def euler_seir(beta, sigma, gamma, S0, E0, I0, R0, timepoints, N):  # function w
 
 
 timepoints = data["day"].to_numpy() # timepoints are the day from the data
-beta = 0.3 # I just put a random value here for now idk if that's right 
-sigma = 0.1 # same here
-gamma = 0.05 # same here 
+beta = 0.2 # I just put a random value here for now idk if that's right 
+sigma = 0.083 # 12 days of incubation period
+gamma = 0.14 # 7 days of infection 
 # initial conditions from the data
 N = 45
 I0 = 1
@@ -75,9 +77,91 @@ E0 = 0
 R0 = 0
 S, E, I, R = euler_seir(beta, sigma, gamma, S0, E0, I0, R0, timepoints, N)
 
-print(S)
-print(E)    
-print(I)
-print(R)
+# print(S)
+# print(E)    
+# print(I)
+# print(R)
 
 # %%
+# Observed infected data
+data_I = data["active reported daily cases"].to_numpy()
+
+# parameter ranges for beta sigma and gamma
+beta_range = np.linspace(0.01, 1, 30)
+sigma_range = np.linspace(0.01, 1, 30)
+gamma_range = np.linspace(0.01, 1, 30)
+
+# create an empty list to store SSE values
+SSE = []
+
+# record best parameters
+best_beta = None
+best_sigma = None
+best_gamma = None
+best_SSE = np.inf
+
+# Loop through parameter ranges
+for b in beta_range:
+    for s in sigma_range:
+        for g in gamma_range:
+
+            # Run SEIR model
+            S, E, I, R = euler_seir(b, s, g, S0, E0, I0, R0, timepoints, N)
+
+            # Convert model I values to numpy array and trim to data length
+            I_model = np.array(I[:len(data_I)])
+
+            # Calculate SSE
+            sse = np.sum((data_I - I_model) ** 2)
+
+            # Append to SSE list
+            SSE.append(sse)
+
+            # Check if this is the best fit
+            if sse < best_SSE:
+                best_SSE = sse
+                best_beta = b
+                best_sigma = s
+                best_gamma = g
+
+# Print results
+print("best_beta:", best_beta)
+print("best_sigma:", best_sigma)
+print("best_gamma:", best_gamma)
+print("SSE:", best_SSE)
+
+
+#%% use the best parameters to predict the future
+future_days = 150
+timepoints_future = np.arange(0, future_days)
+
+S, E, I, R = euler_seir(best_beta, best_sigma, best_gamma,
+                        S0, E0, I0, R0,
+                        timepoints_future, N)
+
+# Convert to numpy array
+I = np.array(I)
+
+# peak height of infections
+peak_height = np.max(I)
+
+# what day does the peak occur
+peak_day = np.argmax(I)
+
+print("Peak infections:", peak_height)
+print("Peak occurs on day:", peak_day)
+
+plt.figure()
+
+# add the real data to the plot
+plt.scatter(data["day"], data["active reported daily cases"], label="Real Data")
+
+# add the model prediction to the plot
+plt.plot(timepoints_future, I, label="SEIR Model")
+
+plt.xlabel("Days")
+plt.ylabel("Active Infections")
+plt.title("SEIR Model")
+plt.legend()
+
+plt.show()
