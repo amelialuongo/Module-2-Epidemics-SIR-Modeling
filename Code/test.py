@@ -1,4 +1,3 @@
-#%%
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,7 +5,7 @@ import numpy as np
 #%%
 # Load the data
 data = pd.read_csv(
-    '/Users/amelialuongo/Desktop/comp bme/Module-2-Epidemics-SIR-Modeling/Data/mystery_virus_daily_active_counts_RELEASE#2.csv',
+    '/Users/amelialuongo/Desktop/comp bme/Module-2-Epidemics-SIR-Modeling/Data/mystery_virus_daily_active_counts_RELEASE#3.csv',
     parse_dates=['date']
 )
 
@@ -44,12 +43,12 @@ data_I = data["active reported daily cases"].to_numpy()
 timepoints = data["day"].to_numpy()
 
 # Population size (larger so infections aren't capped)
-N = 1000
+N = 17000
 
 # Initial conditions
 I0 = data_I[0]
 E0 = 0
-R0 = 0
+R0 = 1.835
 S0 = N - I0
 
 #%%
