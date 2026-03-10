@@ -51,7 +51,7 @@ def euler_seir(beta, sigma, gamma, S0, E0, I0, R0, timepoints, N):  # function w
         dR = gamma * I[-1]
 
         # update S, E, I, R using Euler's method
-        S_new = S[-1] + dS
+        S_new = S[-1] + dS 
         E_new = E[-1] + dE
         I_new = I[-1] + dI
         R_new = R[-1] + dR
@@ -70,7 +70,7 @@ beta = 0.2 # I just put a random value here for now idk if that's right
 sigma = 0.083 # 12 days of incubation period
 gamma = 0.14 # 7 days of infection 
 # initial conditions from the data
-N = 45
+N = 70
 I0 = 1
 S0 = 44
 E0 = 0

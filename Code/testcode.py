@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 data = pd.read_csv(
-    r'C:\Users\ajq2af\OneDrive - University of Virginia\Documents\UVA\BME 2315\module2\Module-2-Epidemics-SIR-Modeling\Data\mystery_virus_daily_active_counts_RELEASE#2.csv',
+    r'/Users/amelialuongo/Desktop/comp bme/Module-2-Epidemics-SIR-Modeling/Data/mystery_virus_daily_active_counts_RELEASE#2.csv',
     parse_dates=['date']
 )
 
