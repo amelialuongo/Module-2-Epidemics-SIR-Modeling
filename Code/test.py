@@ -49,7 +49,7 @@ N = 1000
 # Initial conditions
 I0 = data_I[0]
 E0 = 0
-R0 = 0
+R0 = 1.8
 S0 = N - I0
 
 #%%
